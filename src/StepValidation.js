@@ -11,9 +11,7 @@ const C = {
   light: '#f6f8fd',
 };
 
-const ALL_ITEMS = CHECKLIST.flatMap(s =>
-  s.groups.flatMap(g => g.items.map(i => ({ ...i, section: s.title })))
-);
+
 
 export default function StepValidation({ intakeData, checked, onBack, onRestart }) {
   const [images, setImages] = useState([]);
