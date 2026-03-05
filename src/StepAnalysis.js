@@ -108,12 +108,27 @@ Retorne o JSON de validação campo a campo.`;
       });
 
       const data = await response.json();
+
+      if (!response.ok || data.error) {
+        const msg = data.error?.message || data.error || 'Erro desconhecido';
+        setError('Erro da API: ' + msg);
+        return;
+      }
+
       const raw = data.content?.find(b => b.type === 'text')?.text || '';
+      if (!raw) {
+        setError('Sem resposta da IA. Verifique se a variavel ANTHROPIC_KEY esta configurada no Vercel.');
+        return;
+      }
       const clean = raw.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(clean);
-      setResult(parsed);
+      try {
+        const parsed = JSON.parse(clean);
+        setResult(parsed);
+      } catch (parseErr) {
+        setError('Erro ao interpretar resposta da IA: ' + parseErr.message);
+      }
     } catch (e) {
-      setError('Erro ao analisar o PDF. Tente novamente.');
+      setError('Erro de conexao: ' + e.message);
       console.error(e);
     } finally {
       setLoading(false);
